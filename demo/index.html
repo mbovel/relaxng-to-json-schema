@@ -104,8 +104,7 @@
 		})
 
 		const jsonSchemaEditor = CodeMirror(document.querySelector(".json.schema"), {
-			mode: "javascript",
-			readOnly: true,
+			mode: "javascript"
 
 		});
 
@@ -115,19 +114,24 @@
 
 		});
 
-		function handleSchemaChange() {
+		function handleXmlSchemaChange() {
 			const xmSchema = xmlSchemaEditor.getValue();
 			localStorage.setItem("xmlSchema", xmSchema)
 			try {
 				const jsonSchema = relaxngToJsonSchema(xmSchema)
-				const jsonSchemaString = JSON.stringify(jsonSchema, null, 4);
-				console.log(jsonSchemaString);
-				jsonSchemaEditor.setValue(jsonSchemaString)
+				jsonSchemaEditor.setValue(JSON.stringify(jsonSchema, null, 2))
+			} catch (error) {
+				console.error(error)
+			}
+		}
+
+		function handleJsonSchemaChange() {
+			try {
 				ReactDOM.render(
 					React.createElement(
 						JSONSchemaForm.default,
 						{
-							schema: jsonSchema,
+							schema: JSON.parse(jsonSchemaEditor.getValue()),
 							onChange: log("changed"),
 							onSubmit: log("submitted"),
 							onError: log("errors")
@@ -138,8 +142,9 @@
 			}
 		}
 
-		xmlSchemaEditor.on("changes", handleSchemaChange)
-		handleSchemaChange()
+		xmlSchemaEditor.on("changes", handleXmlSchemaChange)
+		jsonSchemaEditor.on("changes", handleJsonSchemaChange)
+		handleXmlSchemaChange()
 	</script>
 
 </body>

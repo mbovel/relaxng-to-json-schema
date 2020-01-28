@@ -14,56 +14,46 @@ const RNG_NS = "http://relaxng.org/ns/structure/1.0";
  */
 export function relaxngToJsonSchema(schemaString) {
 	const fullSchema = parseXML(schemaString);
-	return convert(fullSchema.children[0], fullSchema)[1];
+	return convert(fullSchema.children[0], fullSchema);
 }
 
 /**
  * @param {Element} el
  * @param {Document} root
- * @returns { [string, JSONType]}
+ * @returns {JSONType}
  */
 function convert(el, root) {
-	let schema;
+	const title = getElementTitle(el);
 	switch (el.tagName) {
-		case "zeroOrMore":
-			schema = { type: "array", items: convertChildren(el.children, root) };
-			break;
-		case "oneOrMore":
-			schema = { type: "array", items: convertChildren(el.children, root), minItems: 1 };
-			break;
 		case "optional":
-			return convert(el.children[0], root);
 		case "element":
 		case "attribute":
 		case "group":
-			schema = convertChildren(el.children, root);
-			break;
+		case "start":
+		case "define":
+			const childrenSchema = convertSequence(el.children, root);
+			return { ...childrenSchema, title: title ?? childrenSchema.title };
+		case "zeroOrMore":
+			return { type: "array", items: convertSequence(el.children, root), title };
+		case "oneOrMore":
+			return { type: "array", items: convertSequence(el.children, root), minItems: 1, title };
 		case "choice":
-			schema = { oneOf: [...el.children].map(c => convert(c, root)[1]) };
-			break;
+			return { oneOf: [...el.children].map(c => convert(c, root)), title };
 		case "grammar":
-			schema = convertChildren(find(root, "start").children, root);
-			break;
+			return convert(find(root, "start"), root);
 		case "value":
-			schema = { type: "string", const: el.textContent };
-			break;
+			return { type: "string", const: el.textContent };
 		case "data":
-			schema = { type: "string" };
-			break;
+			return { type: "string" };
 		case "text":
-			schema = { type: "string" };
-			break;
+			return { type: "string" };
 		case "ref":
 			const name = el.getAttribute("name");
 			if (!name) throw new Error("")
-			const defineEl = find(root, `define[name='${name}']`);
-			schema = convertChildren(defineEl.children, root);
-			break;
+			return convert(find(root, `define[name='${name}']`), root);
 		default:
 			throw new Error("Unknown tag name: " + el.tagName);
 	}
-	schema.title = getElementTitle(el);
-	return [getElementKey(el), schema];
 }
 
 let noNameCounter = 1;
@@ -73,8 +63,7 @@ let noNameCounter = 1;
  * @returns {string}
  */
 function getElementKey(el) {
-	const prefix = el.localName === "attribute" ? "@" : ""
-	return prefix + (el.getAttributeNS(RNGJS_NS, "key") ?? el.getAttribute("name") ?? ("$noName" + ++noNameCounter));
+	return el.getAttributeNS(RNGJS_NS, "key") ?? el.getAttribute("name") ?? ("$noName" + ++noNameCounter);
 }
 
 /**
@@ -90,17 +79,22 @@ function getElementTitle(el) {
  * @param {Document} root
  * @returns {JSONType}
  */
-function convertChildren(children, root) {
-	if (children.length === 1) return convert(children[0], root)[1];
-	return { type: "object", properties: Object.fromEntries(convertAll(children, root)) };
-}
+function convertSequence(children, root) {
+	if (children.length === 1) return convert(children[0], root);
 
-/**
- * @param {HTMLCollection} els
- * @param {Document} root
- */
-function convertAll(els, root) {
-	return [...els].filter(isRngElement).map(c => convert(c, root));
+	const properties = {}
+	const required = []
+
+	for (const child of children) {
+		if (!isRngElement(child)) continue;
+
+		const key = getElementKey(child);
+		properties[key] = convert(child, root);
+
+		if (child.localName !== "optional") required.push(key)
+	}
+
+	return { type: "object", properties, required };
 }
 
 /**
@@ -109,7 +103,9 @@ function convertAll(els, root) {
  * @returns {Element}
  */
 function find(root, query, namespace = RNG_NS) {
-	return [...root.querySelectorAll(query)].filter(node => node.namespaceURI === namespace)[0];
+	const results = [...root.querySelectorAll(query)].filter(node => node.namespaceURI === namespace);
+	if (results.length < 1) throw new Error("")
+	return results[0];
 }
 
 const nodeNames = new Set([
