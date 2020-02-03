@@ -1,12 +1,17 @@
 {
-  "name": "relaxng-to-json-schema",
-  "version": "0.0.1",
-  "description": "",
-  "type": "module",
-  "main": "src/index.js",
-  "scripts": {
-    "test": "jest"
-  },
-  "author": "",
-  "license": "ISC"
+	"name": "relaxng-to-json-schema",
+	"version": "0.0.1",
+	"description": "",
+	"main": "src/index.js",
+	"scripts": {
+		"test": "mocha",
+		"format": "prettier examples/*.json src/* test/* --write"
+	},
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"glob": "^7.1.6",
+		"jsdom": "^16.0.1",
+		"mocha": "^7.0.1"
+	}
 }
