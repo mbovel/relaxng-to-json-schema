@@ -1,43 +1,30 @@
 {
-  "type": "array",
-  "items": {
-    "type": "object",
-    "properties": {
-      "email": {
-        "type": "string",
-        "title": "email"
-      },
-      "note": {
-        "type": "string",
-        "title": "note"
-      }
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "name": {
+                "type": "string",
+                "title": "name",
+                "xml:element": "name"
+            },
+            "email": {
+                "type": "string",
+                "title": "email",
+                "xml:element": "email"
+            }
+        },
+        "required": [
+            "name",
+            "email"
+        ],
+        "xml:order": [
+            "name",
+            "email"
+        ],
+        "title": "card",
+        "xml:element": "card"
     },
-    "oneOf": [
-      {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "title": "name"
-          }
-        }
-      },
-      {
-        "type": "object",
-        "properties": {
-          "givenName": {
-            "type": "string",
-            "title": "Given name"
-          },
-          "familyName": {
-            "type": "string",
-            "title": "familyName"
-          }
-        }
-      }
-    ],
-    "title": "Card"
-  },
-  "minItems": 1,
-  "title": "Address Book"
+    "title": "addressBook",
+    "xml:element": "addressBook"
 }

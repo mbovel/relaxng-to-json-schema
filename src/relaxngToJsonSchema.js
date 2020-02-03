@@ -1,4 +1,4 @@
-import { parseXML } from "./utils.js"
+import { parseXML } from "./utils.js";
 
 const RNGJS_NS = "https://github.com/mbovel/autoui";
 const RNG_NS = "http://relaxng.org/ns/structure/1.0";
@@ -12,9 +12,9 @@ const RNG_NS = "http://relaxng.org/ns/structure/1.0";
  * @param {string} schemaString
  * @returns {JSONType}
  */
-export function relaxngToJsonSchema(schemaString) {
-	const fullSchema = parseXML(schemaString);
-	return convert(fullSchema.children[0], fullSchema);
+export default function relaxngToJsonSchema(schemaString) {
+	const root = parseXML(schemaString);
+	return convert(root.children[0], root);
 }
 
 /**
@@ -31,8 +31,13 @@ function convert(el, root) {
 		case "group":
 		case "start":
 		case "define":
-			const childrenSchema = convertSequence(el.children, root);
-			return { ...childrenSchema, title: title ?? childrenSchema.title };
+			const schema = convertSequence(el.children, root);
+			schema["title"] = title || schema["title"];
+			if (el.tagName === "element")
+				schema["xml:element"] = el.getAttribute("name").toString();
+			if (el.tagName === "attribute")
+				schema["xml:attribute"] = el.getAttribute("name").toString();
+			return schema;
 		case "zeroOrMore":
 			return { type: "array", items: convertSequence(el.children, root), title };
 		case "oneOrMore":
@@ -49,7 +54,7 @@ function convert(el, root) {
 			return { type: "string" };
 		case "ref":
 			const name = el.getAttribute("name");
-			if (!name) throw new Error("")
+			if (!name) throw new Error("");
 			return convert(find(root, `define[name='${name}']`), root);
 		default:
 			throw new Error("Unknown tag name: " + el.tagName);
@@ -63,7 +68,9 @@ let noNameCounter = 1;
  * @returns {string}
  */
 function getElementKey(el) {
-	return el.getAttributeNS(RNGJS_NS, "key") ?? el.getAttribute("name") ?? ("$noName" + ++noNameCounter);
+	return (
+		el.getAttributeNS(RNGJS_NS, "key") || el.getAttribute("name") || "$noName" + ++noNameCounter
+	);
 }
 
 /**
@@ -71,7 +78,7 @@ function getElementKey(el) {
  * @returns {string}
  */
 function getElementTitle(el) {
-	return el.getAttributeNS(RNGJS_NS, "title") ?? el.getAttribute("name") ?? undefined;
+	return el.getAttributeNS(RNGJS_NS, "title") || el.getAttribute("name") || undefined;
 }
 
 /**
@@ -82,19 +89,21 @@ function getElementTitle(el) {
 function convertSequence(children, root) {
 	if (children.length === 1) return convert(children[0], root);
 
-	const properties = {}
-	const required = []
+	const properties = {};
+	const order = [];
+	const required = [];
 
 	for (const child of children) {
 		if (!isRngElement(child)) continue;
 
 		const key = getElementKey(child);
 		properties[key] = convert(child, root);
+		order.push(key);
 
-		if (child.localName !== "optional") required.push(key)
+		if (child.localName !== "optional") required.push(key);
 	}
 
-	return { type: "object", properties, required };
+	return { type: "object", properties, required, "xml:order": order };
 }
 
 /**
@@ -103,8 +112,10 @@ function convertSequence(children, root) {
  * @returns {Element}
  */
 function find(root, query, namespace = RNG_NS) {
-	const results = [...root.querySelectorAll(query)].filter(node => node.namespaceURI === namespace);
-	if (results.length < 1) throw new Error("")
+	const results = [...root.querySelectorAll(query)].filter(
+		node => node.namespaceURI === namespace
+	);
+	if (results.length < 1) throw new Error("");
 	return results[0];
 }
 

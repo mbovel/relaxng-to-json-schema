@@ -15,7 +15,7 @@
 		integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
 
 
-	<!-- Load CodeMirror styles and scripts (to show editable code editors). -->
+	<!-- Load CodeMirror styles and scripts (to show code editors). -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.css"
 		integrity="sha256-vZ3SaLOjnKO/gGvcUWegySoDU6ff33CS5i9ot8J9Czk=" crossorigin="anonymous" />
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.js"
@@ -78,7 +78,7 @@
 	<div class="ui"></div>
 
 	<script type="module">
-		import { relaxngToJsonSchema } from "../src/relaxngToJsonSchema.js"
+		import relaxngToJsonSchema from "../src/relaxngToJsonSchema.js"
 
 		const Form = JSONSchemaForm.default;
 
@@ -89,13 +89,13 @@
 
 		const xmlSchemaEditor = CodeMirror(document.querySelector(".xml.schema"), {
 			mode: "xml",
-			value: localStorage.getItem("xmlSchema") ?? "",
+			value: localStorage.getItem("xmlSchema") || "",
 			autoCloseTags: true
 		});
 
 		const xmlContentEditor = CodeMirror(document.querySelector(".xml.content"), {
 			mode: "xml",
-			value: localStorage.getItem("xmlContent") ?? "",
+			value: localStorage.getItem("xmlContent") || "",
 			autoCloseTags: true
 		});
 

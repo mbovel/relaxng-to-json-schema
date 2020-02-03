@@ -3,5 +3,5 @@
  * @returns {Document}
  */
 export function parseXML(input) {
-	return (new DOMParser()).parseFromString(input, "text/xml");
+	return new DOMParser().parseFromString(input, "text/xml");
 }
