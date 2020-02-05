@@ -125,8 +125,8 @@
 			const uiContainer = document.querySelector(".ui");
 			const exampleSelect = document.querySelector("#example-select");
 
-			const savedXmlSchema = localStorage.getItem("xmlSchema");
-			const savedXmlContent = localStorage.getItem("xmlContent");
+			const savedXmlSchema = localStorage.getItem("xmlSchema") || "";
+			const savedXmlContent = localStorage.getItem("xmlContent") || "";
 
 			const log = type => console.log.bind(console, type);
 
