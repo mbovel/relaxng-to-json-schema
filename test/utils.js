@@ -1,23 +1,44 @@
 const fs = require("fs");
-const assert = require("assert");
+const path = require("path");
+
+function loadJSDOM() {
+	const { JSDOM } = require("jsdom");
+	const window = new JSDOM("").window;
+	for (const key of ["DOMParser", "Node"]) {
+		global[key] = window[key];
+	}
+}
 
 /**
- * @param {any} actual
- * @param {string} snapshotFilename
+ * @param {string} filename
+ * @returns {Element}
  */
-exports.assertJsonSnapshotMatch = function assertJsonSnapshotMatch(actual, snapshotFilename) {
-	if (process.env["UPDATE_SNAPSHOTS"]) {
-		fs.writeFileSync(snapshotFilename, JSON.stringify(actual, null, 4), "utf-8");
-		return;
-	}
+function readXML(filename) {
+	return new DOMParser().parseFromString(fs.readFileSync(filename, "utf-8"), "text/xml")
+		.children[0];
+}
 
-	const expected = fs.existsSync(snapshotFilename)
-		? JSON.parse(fs.readFileSync(snapshotFilename, "utf-8"))
-		: {};
-	assert.deepEqual(actual, expected);
-};
+/**
+ * @param {string} filename
+ * @returns {Document}
+ */
+function readJSON(filename) {
+	return JSON.parse(fs.readFileSync(filename, "utf-8"));
+}
 
-exports.loadJSDOM = function() {
-	const { JSDOM } = require("jsdom");
-	global["DOMParser"] = new JSDOM("").window.DOMParser;
-};
+/**
+ * @param {string} examplePath
+ */
+function readExample(examplePath) {
+	return {
+		xmlSchema: readXML(path.join(examplePath, "schema.rng")),
+		xmlContent: readXML(path.join(examplePath, "content.xml")),
+		jsonSchema: readJSON(path.join(examplePath, "schema.json")),
+		jsonContent: readJSON(path.join(examplePath, "content.json"))
+	};
+}
+
+exports.loadJSDOM = loadJSDOM;
+exports.readJSON = readJSON;
+exports.readXML = readXML;
+exports.readExample = readExample;

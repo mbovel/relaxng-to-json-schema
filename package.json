@@ -5,7 +5,7 @@
 	"main": "src/index.js",
 	"scripts": {
 		"test": "mocha",
-		"format": "prettier examples/*.json src/* test/* --write"
+		"format": "prettier examples/*.json src/* test/* demo/* --write"
 	},
 	"author": "",
 	"license": "ISC",

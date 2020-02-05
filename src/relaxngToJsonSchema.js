@@ -1,28 +1,12 @@
-import { parseXML } from "./utils.js";
-
-const RNGJS_NS = "https://github.com/mbovel/autoui";
+const RNGJS_NS = "https://github.com/mbovel/relaxng-to-json-schema";
 const RNG_NS = "http://relaxng.org/ns/structure/1.0";
 
 /**
- * A number, or a string containing a number.
- * @typedef {(number|string|boolean|Array|Object)} JSONType
- */
-
-/**
- * @param {string} schemaString
- * @returns {JSONType}
- */
-export default function relaxngToJsonSchema(schemaString) {
-	const root = parseXML(schemaString);
-	return convert(root.children[0], root);
-}
-
-/**
  * @param {Element} el
- * @param {Document} root
- * @returns {JSONType}
+ * @param {Element} root
+ * @returns {any}
  */
-function convert(el, root) {
+export default function relaxngToJsonSchema(el, root = el) {
 	const title = getElementTitle(el);
 	switch (el.tagName) {
 		case "optional":
@@ -32,7 +16,7 @@ function convert(el, root) {
 		case "start":
 		case "define":
 			const schema = convertSequence(el.children, root);
-			schema["title"] = title || schema["title"];
+			schema["title"] = title || schema["title"] || null;
 			if (el.tagName === "element")
 				schema["xml:element"] = el.getAttribute("name").toString();
 			if (el.tagName === "attribute")
@@ -43,9 +27,9 @@ function convert(el, root) {
 		case "oneOrMore":
 			return { type: "array", items: convertSequence(el.children, root), minItems: 1, title };
 		case "choice":
-			return { oneOf: [...el.children].map(c => convert(c, root)), title };
+			return { oneOf: [...el.children].map(c => relaxngToJsonSchema(c, root)), title };
 		case "grammar":
-			return convert(find(root, "start"), root);
+			return relaxngToJsonSchema(find(root, "start"), root);
 		case "value":
 			return { type: "string", const: el.textContent };
 		case "data":
@@ -55,7 +39,7 @@ function convert(el, root) {
 		case "ref":
 			const name = el.getAttribute("name");
 			if (!name) throw new Error("");
-			return convert(find(root, `define[name='${name}']`), root);
+			return relaxngToJsonSchema(find(root, `define[name='${name}']`), root);
 		default:
 			throw new Error("Unknown tag name: " + el.tagName);
 	}
@@ -78,16 +62,16 @@ function getElementKey(el) {
  * @returns {string}
  */
 function getElementTitle(el) {
-	return el.getAttributeNS(RNGJS_NS, "title") || el.getAttribute("name") || undefined;
+	return el.getAttributeNS(RNGJS_NS, "title") || el.getAttribute("name");
 }
 
 /**
  * @param {HTMLCollection} children
- * @param {Document} root
- * @returns {JSONType}
+ * @param {Element} root
+ * @returns {any}
  */
 function convertSequence(children, root) {
-	if (children.length === 1) return convert(children[0], root);
+	if (children.length === 1) return relaxngToJsonSchema(children[0], root);
 
 	const properties = {};
 	const order = [];
@@ -97,7 +81,7 @@ function convertSequence(children, root) {
 		if (!isRngElement(child)) continue;
 
 		const key = getElementKey(child);
-		properties[key] = convert(child, root);
+		properties[key] = relaxngToJsonSchema(child, root);
 		order.push(key);
 
 		if (child.localName !== "optional") required.push(key);
@@ -107,7 +91,7 @@ function convertSequence(children, root) {
 }
 
 /**
- * @param {Document} root
+ * @param {Element} root
  * @param {string} query
  * @returns {Element}
  */

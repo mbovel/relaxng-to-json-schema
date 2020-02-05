@@ -1,7 +1,7 @@
 const assert = require("assert");
-const fs = require("fs");
+const path = require("path");
 const glob = require("glob");
-const { assertJsonSnapshotMatch, loadJSDOM } = require("./utils");
+const { loadJSDOM, readExample } = require("./utils");
 loadJSDOM();
 
 describe("relaxngToJsonSchema", () => {
@@ -32,11 +32,10 @@ describe("relaxngToJsonSchema", () => {
 		assert.equal(typeof relaxngToJsonSchema, "function");
 	});
 
-	for (const file of glob.sync("examples/*.rng")) {
-		it("works with example " + file, () => {
-			const input = fs.readFileSync(file, "utf-8");
-			const result = relaxngToJsonSchema(input);
-			assertJsonSnapshotMatch(result, file.replace(/\.rng$/, ".json"));
+	for (const folder of glob.sync("examples/*")) {
+		it("works with " + folder, () => {
+			const { xmlSchema, jsonSchema } = readExample(folder);
+			assert.deepStrictEqual(relaxngToJsonSchema(xmlSchema), jsonSchema);
 		});
 	}
 });
