@@ -1,0 +1,13 @@
+[
+	{
+		"$noName2": {
+			"givenName": "John",
+			"familyName": "Smith"
+		},
+		"email": "js@example.com"
+	},
+	{
+		"$noName2": "Fred Bloggs",
+		"email": "fb@example.net"
+	}
+]

@@ -1,0 +1,52 @@
+{
+	"type": "array",
+	"items": {
+		"type": "object",
+		"properties": {
+			"$noName2": {
+				"oneOf": [
+					{
+						"type": "object",
+						"properties": {
+							"givenName": {
+								"type": "string",
+								"title": "givenName",
+								"xml:element": "givenName"
+							},
+							"familyName": {
+								"type": "string",
+								"title": "familyName",
+								"xml:element": "familyName"
+							}
+						},
+						"required": ["givenName", "familyName"],
+						"xml:order": ["givenName", "familyName"],
+						"title": null
+					},
+					{
+						"type": "string",
+						"title": "name",
+						"xml:element": "name"
+					}
+				],
+				"title": null
+			},
+			"email": {
+				"type": "string",
+				"title": "email",
+				"xml:element": "email"
+			},
+			"$noName3": {
+				"type": "string",
+				"title": "note",
+				"xml:element": "note"
+			}
+		},
+		"required": ["$noName2", "email"],
+		"xml:order": ["$noName2", "email", "$noName3"],
+		"title": "card",
+		"xml:element": "card"
+	},
+	"title": "addressBook",
+	"xml:element": "addressBook"
+}

@@ -27,7 +27,10 @@ export default function relaxngToJsonSchema(el, root = el) {
 		case "oneOrMore":
 			return { type: "array", items: convertSequence(el.children, root), minItems: 1, title };
 		case "choice":
-			return { oneOf: [...el.children].map(c => relaxngToJsonSchema(c, root)), title };
+			return {
+				oneOf: sortOneOf([...el.children].map(c => relaxngToJsonSchema(c, root))),
+				title
+			};
 		case "grammar":
 			return relaxngToJsonSchema(find(root, "start"), root);
 		case "value":
@@ -123,4 +126,13 @@ const nodeNames = new Set([
  */
 function isRngElement(node) {
 	return node.namespaceURI === RNG_NS && nodeNames.has(node.tagName);
+}
+
+const oneOfOrder = ["object", "array", "string", "number", "boolean"];
+/**
+ * @param {any[]} items
+ */
+function sortOneOf(items) {
+	// See `compareNumbers` in https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+	return items.sort((a, b) => oneOfOrder.indexOf(a["type"]) - oneOfOrder.indexOf(b["type"]));
 }
