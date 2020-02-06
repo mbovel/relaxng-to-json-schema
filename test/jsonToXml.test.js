@@ -3,7 +3,7 @@ const glob = require("glob");
 const { loadJSDOM, readExample, assertXmlEquals } = require("./utils");
 loadJSDOM();
 
-describe("xmlToJson", () => {
+describe("jsonToXml", () => {
 	let jsonToXml;
 	before(async () => {
 		jsonToXml = (await import("../src/jsonToXml.js")).default;
@@ -15,8 +15,8 @@ describe("xmlToJson", () => {
 
 	for (const folder of glob.sync("examples/*")) {
 		it("works with " + folder, () => {
-			const { xmlContent, jsonSchema, jsonContent } = readExample(folder);
-			assertXmlEquals(jsonToXml(jsonContent, jsonSchema), xmlContent);
+			const { xmlContentNormalized, jsonSchema, jsonContent } = readExample(folder);
+			assertXmlEquals(jsonToXml(jsonContent, jsonSchema), xmlContentNormalized);
 		});
 	}
 });

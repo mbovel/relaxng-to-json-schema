@@ -1,0 +1,50 @@
+{
+	"items": {
+		"properties": {
+			"$noName4": {
+				"oneOf": [
+					{
+						"title": "name",
+						"type": "string",
+						"xml:element": "name"
+					},
+					{
+						"title": "name",
+						"type": "string",
+						"xml:attribute": "name"
+					}
+				],
+				"title": null
+			},
+			"$noName5": {
+				"oneOf": [
+					{
+						"title": "email",
+						"type": "string",
+						"xml:element": "email"
+					},
+					{
+						"title": "email",
+						"type": "string",
+						"xml:attribute": "email"
+					}
+				],
+				"title": null
+			}
+		},
+		"required": [
+			"$noName4",
+			"$noName5"
+		],
+		"title": "card",
+		"type": "object",
+		"xml:element": "card",
+		"xml:order": [
+			"$noName4",
+			"$noName5"
+		]
+	},
+	"title": "addressBook",
+	"type": "array",
+	"xml:element": "addressBook"
+}

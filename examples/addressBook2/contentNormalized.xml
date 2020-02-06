@@ -1,6 +1,7 @@
 <addressBook>
   <card>
-    <name>John Smith</name>
+    <givenName>John</givenName>
+    <familyName>Smith</familyName>
     <email>js@example.com</email>
   </card>
   <card>

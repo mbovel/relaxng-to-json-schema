@@ -37,6 +37,7 @@ function readExample(examplePath) {
 	return {
 		xmlSchema: readXML(path.join(examplePath, "schema.rng")),
 		xmlContent: readXML(path.join(examplePath, "content.xml")),
+		xmlContentNormalized: readXML(path.join(examplePath, "contentNormalized.xml")),
 		jsonSchema: readJSON(path.join(examplePath, "schema.json")),
 		jsonContent: readJSON(path.join(examplePath, "content.json"))
 	};
