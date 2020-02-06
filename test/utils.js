@@ -1,10 +1,12 @@
 const fs = require("fs");
 const path = require("path");
+const assert = require("assert");
+const parseXml = require("@rgrove/parse-xml");
 
 function loadJSDOM() {
 	const { JSDOM } = require("jsdom");
 	const window = new JSDOM("").window;
-	for (const key of ["DOMParser", "Node"]) {
+	for (const key of ["DOMParser", "XMLSerializer", "Node", "Text", "Element", "document"]) {
 		global[key] = window[key];
 	}
 }
@@ -14,8 +16,10 @@ function loadJSDOM() {
  * @returns {Element}
  */
 function readXML(filename) {
-	return new DOMParser().parseFromString(fs.readFileSync(filename, "utf-8"), "text/xml")
-		.children[0];
+	const result = new DOMParser().parseFromString(fs.readFileSync(filename, "utf-8"), "text/xml")
+		.documentElement;
+	cleanXml(result);
+	return result;
 }
 
 /**
@@ -38,7 +42,25 @@ function readExample(examplePath) {
 	};
 }
 
+function assertXmlEquals(expected, actual) {
+	assert.deepStrictEqual(xmlToString(expected), xmlToString(actual));
+}
+
+/**
+ * @param {Node} node
+ */
+function cleanXml(node) {
+	[...node.childNodes].forEach(cleanXml);
+	// @ts-ignore (Text node's textContent is always non-null)
+	if (node.nodeType === Node.TEXT_NODE && !node.textContent.trim()) node.remove();
+}
+
+function xmlToString(el) {
+	return new XMLSerializer().serializeToString(el);
+}
+
 exports.loadJSDOM = loadJSDOM;
 exports.readJSON = readJSON;
 exports.readXML = readXML;
 exports.readExample = readExample;
+exports.assertXmlEquals = assertXmlEquals;

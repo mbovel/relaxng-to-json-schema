@@ -17,10 +17,8 @@ export default function relaxngToJsonSchema(el, root = el) {
 		case "define":
 			const schema = convertSequence(el.children, root);
 			schema["title"] = title || schema["title"] || null;
-			if (el.tagName === "element")
-				schema["xml:element"] = el.getAttribute("name").toString();
-			if (el.tagName === "attribute")
-				schema["xml:attribute"] = el.getAttribute("name").toString();
+			if (el.tagName === "element") schema["xml:element"] = el.getAttribute("name");
+			if (el.tagName === "attribute") schema["xml:attribute"] = el.getAttribute("name");
 			return schema;
 		case "zeroOrMore":
 			return { type: "array", items: convertSequence(el.children, root), title };
@@ -62,7 +60,7 @@ function getElementKey(el) {
 
 /**
  * @param {Element} el
- * @returns {string}
+ * @returns {string|null}
  */
 function getElementTitle(el) {
 	return el.getAttributeNS(RNGJS_NS, "title") || el.getAttribute("name");
