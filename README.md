@@ -57,3 +57,12 @@ See full minimal working example in [demo/minimal.html](https://github.com/mbove
 ## Examples
 
 Conversion examples can be found in the [`examples` directory](https://github.com/mbovel/relaxng-to-json-schema/tree/master/examples).
+
+## Development setup
+
+In order to use the library, you don't need to install anything as it is written in modern JavaScript directly understandable by modern browsers.
+
+To run the tests, you will need to:
+
+- Install [Node.js](https://nodejs.org/en/) **with a version higher than or equal to 13.8.0**,
+- Install the dependencies using `npm install` in this directory.
