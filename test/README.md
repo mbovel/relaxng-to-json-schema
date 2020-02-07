@@ -1,10 +1,12 @@
-## ECMAScript modules interoperability with CommonJS
+Source code is automatically tested against test cases in the `examples` directory using [Node.js](https://nodejs.org/en/) and [Mocha](https://mochajs.org/).
+
+## Note about ECMAScript modules interoperability with CommonJS
 
 Code in the `src` folder uses the new ECMAScript modules syntax to define modules. This is the official standard
 format to package JavaScript code for reuse, and will eventually be fully supported in all browsers and Node.js.
 
 However, ECMAScript modules are *still* experimental in Node.js. Currently, in order to be able to use them with
-Mocha.js (which imports tests using CommonJS `require` function), we need to make our tests a CommonJS module and
+Mocha (which imports tests using CommonJS `require` function), we need to make our tests a CommonJS module and
 import our ECMAScript modules using a dynamic import (`import(...)`). We use the `before` hook from Mocha to do
 
 See:
