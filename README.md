@@ -2,7 +2,7 @@
 
 This library contains functions to convert *simple* RelaxNG schemas to JSON Schemas and to convert between corresponding XML documents and JSON files. 
 
-The primary use-case is the generation of web UIs for XML data using existing libraries based on JSON schemas like [React Json Schema Form](https://github.com/rjsf-team/react-jsonschema-form) or [AutoUI]().
+The primary use-case is the generation of web UIs for XML data using existing libraries based on JSON schemas like [React Json Schema Form](https://github.com/rjsf-team/react-jsonschema-form) or [AutoUI](https://github.com/mbovel/autoui).
 
 ## Demonstration
 
