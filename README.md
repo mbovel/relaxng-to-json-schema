@@ -52,4 +52,4 @@ function parseXML(input) {
 </script>
 ```
 
-See full minimal working example in <demo/minimal.html>
+See full minimal working example in [demo/minimal.html](https://github.com/mbovel/relaxng-to-json-schema/blob/master/demo/minimal.html).
