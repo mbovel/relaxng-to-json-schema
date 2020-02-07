@@ -53,3 +53,7 @@ function parseXML(input) {
 ```
 
 See full minimal working example in [demo/minimal.html](https://github.com/mbovel/relaxng-to-json-schema/blob/master/demo/minimal.html).
+
+## Examples
+
+Conversion examples can be found in the [`examples` directory](https://github.com/mbovel/relaxng-to-json-schema/tree/master/examples).
