@@ -6,7 +6,7 @@ The primary use-case is the generation of web UIs for XML data using existing li
 
 ## Demonstration
 
-A live playground can be found here: <https://mbovel.github.io/relaxng-to-json-schema/demo/playground.html>.
+A live playground can be found here: <https://mbovel.github.io/relaxng-to-json-schema/demo/playground.html>. It uses React Json Schema Form to display the UI.
 
 ## Usage
 
