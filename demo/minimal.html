@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Minimal</title>
+</head>
+
+<body>
+	<h1>Minimal example</h1>
+	<h2>JSON Schema</h2>
+	<pre id="json-schema"></pre>
+	<h2>JSON content</h2>
+	<pre id="json-content"></pre>
+	<script type="module">
+		import relaxngToJsonSchema from "../src/relaxngToJsonSchema.js";
+		import xmlToJson from "../src/xmlToJson.js";
+
+		const rngSchema = parseXML(`
+			<element name="addressBook" xmlns="http://relaxng.org/ns/structure/1.0">
+				<zeroOrMore>
+					<element name="card">
+					<element name="name">
+						<text/>
+					</element>
+					<element name="email">
+						<text/>
+					</element>
+					</element>
+				</zeroOrMore>
+			</element>
+		`)
+
+		const xmlContent = parseXML(`
+			<addressBook>
+				<card>
+					<name>John Smith</name>
+					<email>js@example.com</email>
+				</card>
+				<card>
+					<name>Fred Bloggs</name>
+					<email>fb@example.net</email>
+				</card>
+			</addressBook>
+		`)
+
+		const jsonSchema = relaxngToJsonSchema(rngSchema);
+		const jsonContent = xmlToJson(xmlContent, jsonSchema);
+
+		document.getElementById("json-schema").textContent = JSON.stringify(jsonSchema, null, 2)
+		document.getElementById("json-content").textContent = JSON.stringify(jsonContent, null, 2)
+
+		function parseXML(input) {
+			return new DOMParser().parseFromString(input, "text/xml").documentElement;
+		}
+	</script>
+</body>
+
+</html>
