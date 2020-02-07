@@ -2,7 +2,7 @@
 
 This library contains functions to convert *simple* RelaxNG schemas to JSON Schemas and to convert between corresponding XML documents and JSON files. 
 
-The primary use-case is the generation of web UIs for XML data using existing libraires based on JSON schemas like React Json Schema Forms or AutoUI.
+The primary use-case is the generation of web UIs for XML data using existing libraries based on JSON schemas like [React Json Schema Form](https://github.com/rjsf-team/react-jsonschema-form) or [AutoUI]().
 
 ## Demonstration
 
@@ -65,4 +65,4 @@ In order to use the library, you don't need to install anything as it is written
 To run the tests, you will need to:
 
 - Install [Node.js](https://nodejs.org/en/) **with a version higher than or equal to 13.8.0**,
-- Install the dependencies using `npm install` in this directory.
+- Install the dependencies by running `npm install` in this directory.
