@@ -8,7 +8,7 @@ A live playground can be found here: <https://mbovel.github.io/relaxng-to-json-s
 
 ## Usage
 
-```javascript
+```html
 <script type="module">
 import relaxngToJsonSchema from "../src/relaxngToJsonSchema.js";
 import xmlToJson from "../src/xmlToJson.js";
